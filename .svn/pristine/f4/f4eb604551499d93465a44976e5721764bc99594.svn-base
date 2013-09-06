@@ -1,0 +1,19 @@
+Example and Explanation (Size Category X)
+X - Y Feet (The item is approximately this dimension
+Examples: Self Explanatory
+
+Soak: +XB/+XL (Increase the item’s Soak by this amount after all other effects)
+Hardness: +XB/+XL (Increase the item’s Hardness by this amount after all other effects)
+Attune: +X (Increase the item’s base Attunement by this amount)
+
+Speed: The increase in all movement speeds for the item. The listed number is for the items Move speed, increase the item’s Dash speeds by twice this number.
+Perception Penalty: This is the penalty to viewing things at human scale. The increase in all movement speeds for the item. The listed number is for the items Move speed, increase the item’s Dash speeds by twice this number.
+Human-Scale Interaction Penalty: This is the penalty to interacting with things on the human scale.
+Lifting/Breaking Multiplier: This is the multiplier to Lifting capacities and Breaking damage.
+
+Attack Bonuses: Any bonuses to attacks against enemies on the Human scale will be listed here.
+Attack Penalty: This is the penalty to attacking things on Human scale.
+
+Minimum Damage Increase: The increase of the minimum damage of the item against human scale enemies
+Minimum Damage Decrease: The reduction of minimum damage from human scale enemies. This may explicitly reduce minimum damage to 0.
+Maximum Damage: This is the maximum damage an attack from a human-scale enemy may do to the item.	

@@ -1,0 +1,26 @@
+Tactical Armament Response System
+Cost: Varies; Keywords: Stackable (Special)
+The item has a weapon built into it. This weapon is Obvious. This weapon must be built separately from the item itself and integrated into the item. Integrating this weapon costs 1 AP per 4 AP the weapon would cost to build on its own.
+
+
+Integrated Weapon
+Cost: Varies ; Keywords: Natural, Stackable (Special), Weaponized
+This system is really a group of Subsystems that define an integrated weapon’s traits. These subsystems are specifically exempt from the normal (Artifact Rating) limit on purchases. These weapons are part of the Tactical Armed Response System above, including the 1 actual AP per 4 AP needed to build the weapon rule. The weapon itself doesn't actually cost AP -- it's the above system that does, and the weapon can't exist without the above system.
+
+The base traits of a weapon before any subsystems is Speed 6, Accuracy +0, Damage +(Size)B, Defense +0, Rate 1.
+
+Subsystems:
+
+    Accurate Strike 2 AP: Increase the accuracy of the weapon by 1, to a maximum of +4. 
+    Defensive Weapon 2 AP: Increase the defense of the weapon, to a maximum of +3. 
+    Shield Weapon 4 AP: Increase the defense of the weapon past 3, to a maximum of +8. A weapon with this subsystem has its Accuracy capped at +2, Damage capped at +5, and its Rate capped at 2. 
+    Dangerous Strike 2 or 3 AP: Increase the damage of the weapon by 1, to a maximum of 20. The first 10 purchases cost 2 AP each; the second 10 cost 3 AP each. 
+    Quick Weapon 4 AP: Reduce the Speed of the weapon by 1, to a minimum of 3. 
+    Rapid Strike 3 AP: Increase the Rate of the weapon by 1, to a maximum of 5. 
+    Unstoppable Blow 3 AP: Increase the weapon’s Overwhelming by 1, to a maximum of 25% of the weapon's damage, rounded down. 
+    Ranged Strike 1 AP: Increase the range category of the weapon by one step (10, 20, 30, 40, 50, 75, 100, 150, 200, 250, 300). Weapons with a range category do not have a defense trait. Multiply this range by (item's Size Category + 1). 
+    Area Strike 5 AP: Increase the radius of the area of effect that the weapon targets by one step (10, 20, 30, 40, 50, 75, 100, 150, 200, 250, 300). If the weapon in question does not have Ranged Strike, divide the radius by 10, and it emanates out from the weapon's position rather than over a specific targeted zone. Each step of Area Strike reduces a ranged attack's accuracy by 1. 
+    Clinching 2 AP: This weapon is a Clinching weapon. Clinching weapons have no Defense trait. 
+    Miscellaneous Effects 2 AP: Piercing, Strafing, Disarming, Lance, Martial Arts, Reach, Thrust, Paired 
+    Miscellaneous Flaws (3 AP): Flame Type, Single Shot 
+    Motonic Reliance (1 AP): The weapon costs (total purchases of this subsystem) motes per attack to use. Sustained Power provided to the weapon can reduce the per-attack cost at a 1:1 Sustained Power-to-mote discount ratio. 

@@ -26,14 +26,13 @@ Partial Class Form1
         Me.MenuStrip1 = New System.Windows.Forms.MenuStrip()
         Me.FileToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.NewToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.VehicleToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.LoadToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.SaveToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.BuildToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.MushOutputToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.HelpToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.AboutToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.TabControl1 = New System.Windows.Forms.TabControl()
-        Me.MushOutputToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuStrip1.SuspendLayout()
         Me.SuspendLayout()
         '
@@ -55,16 +54,9 @@ Partial Class Form1
         '
         'NewToolStripMenuItem
         '
-        Me.NewToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.VehicleToolStripMenuItem})
         Me.NewToolStripMenuItem.Name = "NewToolStripMenuItem"
         Me.NewToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
         Me.NewToolStripMenuItem.Text = "New"
-        '
-        'VehicleToolStripMenuItem
-        '
-        Me.VehicleToolStripMenuItem.Name = "VehicleToolStripMenuItem"
-        Me.VehicleToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
-        Me.VehicleToolStripMenuItem.Text = "Vehicle"
         '
         'LoadToolStripMenuItem
         '
@@ -87,6 +79,12 @@ Partial Class Form1
         Me.BuildToolStripMenuItem.Size = New System.Drawing.Size(46, 20)
         Me.BuildToolStripMenuItem.Text = "Build"
         '
+        'MushOutputToolStripMenuItem
+        '
+        Me.MushOutputToolStripMenuItem.Name = "MushOutputToolStripMenuItem"
+        Me.MushOutputToolStripMenuItem.Size = New System.Drawing.Size(145, 22)
+        Me.MushOutputToolStripMenuItem.Text = "Mush Output"
+        '
         'HelpToolStripMenuItem
         '
         Me.HelpToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.AboutToolStripMenuItem})
@@ -107,12 +105,6 @@ Partial Class Form1
         Me.TabControl1.SelectedIndex = 0
         Me.TabControl1.Size = New System.Drawing.Size(1237, 573)
         Me.TabControl1.TabIndex = 1
-        '
-        'MushOutputToolStripMenuItem
-        '
-        Me.MushOutputToolStripMenuItem.Name = "MushOutputToolStripMenuItem"
-        Me.MushOutputToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
-        Me.MushOutputToolStripMenuItem.Text = "Mush Output"
         '
         'Form1
         '
@@ -135,7 +127,6 @@ Partial Class Form1
     Friend WithEvents MenuStrip1 As System.Windows.Forms.MenuStrip
     Friend WithEvents FileToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents NewToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents VehicleToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents LoadToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents SaveToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents HelpToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem

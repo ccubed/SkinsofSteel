@@ -59,7 +59,7 @@
 
         For Each item As SOSSystem In what
 
-            where.TreeView1.Nodes(item.Category - 1).Nodes.Add(item.Name)
+            where.TreeView1.Nodes(item.Category - 1).Nodes.Add(item.ID.ToString, item.Name)
 
         Next
 
@@ -76,7 +76,7 @@
 
             If item.Required = what Then
 
-                where.Nodes.Add(item.Name)
+                where.Nodes.Add(item.ID.ToString, item.Name)
 
             End If
 
@@ -106,8 +106,25 @@
 
     Public Vehicles As New List(Of VehicleCase)
     Public Data As New SystemData
+    'Public TARWeapons as new list(of TARWeapon)
+    'Public WWards as new list(of wward)
 
 End Module
+
+Public Structure ArtInts
+
+    Dim Name As String
+    Dim Rating As Integer
+
+End Structure
+
+Public Structure Multistage
+
+    Dim Number As Integer
+    Dim ID As Integer
+    Dim Name As String
+
+End Structure
 
 Public Structure Defense
 

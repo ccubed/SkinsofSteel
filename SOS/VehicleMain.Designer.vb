@@ -2,6 +2,10 @@
 Public Class VehicleMain
     Inherits TabPage
 
+    Dim SorcIDs As List(Of Integer)
+    Dim Purchases As New List(Of Multistage)
+    Dim Artifacts As New List(Of ArtInts)
+
     'UserControl overrides dispose to clean up the component list.
     <System.Diagnostics.DebuggerNonUserCode()> _
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
@@ -24,21 +28,50 @@ Public Class VehicleMain
 
         If (TreeView1.SelectedNode.Level > 0) Then
 
-            Dim x As Integer = 0
-
-            For i As Integer = 0 To TreeView1.SelectedNode.Parent.Index - 1 Step 1
-
-                x = x + TreeView1.Nodes(i).GetNodeCount(False)
-
-            Next
-
-            x = x + (TreeView1.SelectedNode.Index)
-
-            Dim temp As String = Data.GetSystems()(x).Desc
+            Dim sosmod As SOSSystem = Data.GetSystems()(CType(TreeView1.SelectedNode.Name, Integer))
+            Dim temp As String = sosmod.Desc
+            Dim cost As String
             temp = temp.Replace("[NEWLINE]", vbNewLine + vbNewLine)
-            RichTextBox1.Text = temp
 
-            FillSubSystems(TreeView2, x)
+            If sosmod.Cost.Contains(":") Then
+
+                If sosmod.Cost.Contains("SPECIAL") Then
+
+                    'SPECIAL
+                    If sosmod.Cost.Contains("ArtInt") Then
+
+                        cost = "3 * Artifact Rating"
+
+                    ElseIf sosmod.Cost.Contains("SorcWard") Then
+
+                        cost = "Size Category + (Circle * 2)"
+
+                    ElseIf sosmod.Cost.Contains("RealityC") Then
+
+                        cost = "3 * Size Category per Purchase (2 AP per if Size Category 0)"
+
+                    Else
+
+                        cost = "Varies"
+
+                    End If
+
+                Else
+
+                    'MATH
+                    cost = sosmod.Cost.Split(":")(1).Replace("SC", "Size Category")
+
+                End If
+
+            Else
+
+                cost = sosmod.Cost
+
+            End If
+
+            RichTextBox1.Text = "Cost: " + cost + vbNewLine + vbNewLine + temp
+
+            FillSubSystems(TreeView2, CType(TreeView1.SelectedNode.Name, Integer))
 
         End If
 
@@ -47,17 +80,49 @@ Public Class VehicleMain
 
     Public Sub Handle_SubSystem_Select(sender As Object, e As EventArgs) Handles TreeView2.AfterSelect
 
-        Dim temp As List(Of SubSystem) = Data.GetSubSystems
+        Dim sosmod As SubSystem = Data.GetSubSystems()((CType(TreeView2.SelectedNode.Name, Integer) - CType(Data.GetSystems, List(Of SOSSystem)).Count) + 1)
+        Dim temp As String = sosmod.Desc
+        Dim cost As String
 
-        For Each item As SubSystem In temp
+        temp = temp.Replace("[NEWLINE]", vbNewLine + vbNewLine)
 
-            If TreeView2.SelectedNode.Text = item.Name Then
+        If sosmod.Cost.Contains(":") Then
 
-                RichTextBox1.Text = item.Desc
+            If sosmod.Cost.Contains("SPECIAL") Then
+
+                'SPECIAL
+                If sosmod.Cost.Contains("ArtInt") Then
+
+                    cost = "3 * Artifact Rating"
+
+                ElseIf sosmod.Cost.Contains("SorcWard") Then
+
+                    cost = "Size Category + (Circle * 2)"
+
+                ElseIf sosmod.Cost.Contains("RealityC") Then
+
+                    cost = "3 * Size Category per Purchase (2 AP per if Size Category 0)"
+
+                Else
+
+                    cost = "Varies"
+
+                End If
+
+            Else
+
+                'MATH
+                cost = sosmod.Cost.Split(":")(1).Replace("SC", "Size Category")
 
             End If
 
-        Next
+        Else
+
+            cost = sosmod.Cost
+
+        End If
+
+        RichTextBox1.Text = "Cost: " + cost + vbNewLine + vbNewLine + temp
 
     End Sub
 
@@ -119,66 +184,240 @@ Public Class VehicleMain
 
         If (TreeView1.SelectedNode.Level > 0) Then
 
-            Dim x As Integer = 0
+            Dim temp As SOSSystem = Data.GetSystems()(CType(TreeView1.SelectedNode.Name, Integer))
 
-            For i As Integer = 0 To TreeView1.SelectedNode.Parent.Index - 1 Step 1
+            Dim cost As Integer = 0
 
-                x = x + TreeView1.Nodes(i).GetNodeCount(False)
+            If temp.Cost.Contains("MATH") Then
+                'Account for MATH - costs that begin with MATH indicate a formula that must be parsed
+                For Each a As Char In temp.Cost
 
-            Next
+                    If a = "+" Then
+                        Dim partone As String = temp.Cost.Split("+")(0).Split(":")(1)
+                        Dim parttwo As String = temp.Cost.Split("+")(1)
 
-            x = x + (TreeView1.SelectedNode.Index)
+                        If partone = "SC" Then
 
-            Dim temp As SOSSystem = Data.GetSystems()(x)
+                            If ComboBox2.SelectedIndex = -1 Then
 
-            Dim f As Integer = APBalance.Text
-            Dim d As Integer = APSpent.Text
-            Dim n As Integer
+                                MsgBox("This system requires a size category to be selected. Please select a Size Category and repurchase this module.", MsgBoxStyle.Critical, "Skins of Steel")
+                                Exit Sub
 
-            If temp.Cost.Contains("Size") Then
+                            Else
 
-                If ComboBox2.SelectedIndex = -1 Then
+                                cost = (ComboBox2.SelectedIndex + 1) + CType(parttwo, Integer)
+                                Exit For
 
-                    MsgBox("You can't pick that system yet, you need a size category selected.")
+                            End If
 
-                Else
+                        End If
 
-                    Dim ts As String = temp.Cost.Replace("Size Category", ComboBox2.SelectedItem)
-                    n = ts.Split("/")(0) / ts.Split("/")(1)
+                    ElseIf a = "/" Then
+                        Dim partone As String = temp.Cost.Split("/")(0)
+                        Dim parttwo As String = temp.Cost.Split("/")(1)
 
-                    If n = 0 Then
+                        If partone = "SC" Then
 
-                        n = 1
+                            If ComboBox2.SelectedIndex = -1 Then
+
+                                MsgBox("This system requires a size category to be selected. Please select a Size Category and repurchase this module.", MsgBoxStyle.Critical, "Skins of Steel")
+                                Exit Sub
+
+                            Else
+
+                                cost = ComboBox2.SelectedIndex / CType(parttwo, Integer)
+                                Exit For
+
+                            End If
+
+                        End If
 
                     End If
 
-                    d = d + n
-                    f = f - n
+                Next
 
-                    APSpent.Text = d
-                    APBalance.Text = f
-                    TreeView3.Nodes.Add(temp.Name)
+            ElseIf temp.Cost.Contains("SPECIAL") Then
+                'Account for SPECIAL - costs that begin with SPECIAL indicate either something that requires another 
+                'tool to come up with a cost (TARS, WARDS, AIS) or that are calculated a special way (Reality, Artifact Integration)
+
+                Dim tempstr As String = temp.Cost.Split(":")(1)
+                Dim tai As New ArtInts
+
+                If tempstr = "ArtInt" Then
+
+                    Dim i As String = InputBox("Enter the Artifact Rating of the Artifact being integrated.", "Skins of Steel")
+                    Dim Artifact As String = InputBox("Enter the name of the Artifact you're integrating.", "Skins of Steel")
+
+                    If Not IsNumeric(i) Then
+
+                        MsgBox("That was not a valid number! Artifact Ratings must be numbers! Did not add module.", MsgBoxStyle.Critical, "Skins of Steel")
+                        Exit Sub
+
+                    Else
+
+                        cost = 3 * CType(i, Integer)
+
+                        tai.Name = Artifact
+                        tai.Rating = i
+
+                        Artifacts.Add(tai)
+
+                    End If
+
+                ElseIf tempstr = "TARS" Then
+
+                    MsgBox("You don't actually buy this module. Costs associated with this module are created in the TARS Creator.", MsgBoxStyle.Information, "Skins of Steel")
+
+                ElseIf tempstr = "WARDS" Then
+
+                    MsgBox("You don't actually buy this module. Costs associated with this module are created in the WARDS Creator.", MsgBoxStyle.Information, "Skins of Steel")
+
+                End If
+
+
+            ElseIf temp.Cost.Contains("MULTI") Then
+                'Account for MULTI - costs that begin with MULTI indicate an item that can be purchased either more than once and stacked
+                'or that have two variations in terms of what it does built into the description
+
+                Dim i As Integer = 0
+                Dim x As Integer = 0
+                Dim tms As New Multistage
+
+                For Each item As Multistage In Purchases
+
+                    If item.ID = temp.ID Then
+
+                        tms = item
+                        i = item.Number
+                        Exit For
+
+                    End If
+
+                    x = x + 1
+
+                Next
+
+                If i > 0 Then
+
+                    Purchases.RemoveAt(x)
+
+                End If
+
+                If i = 0 Then
+
+                    cost = CType(temp.Cost.Split(":")(1).Split(";")(0), Integer)
+                    tms.Number = 1
+                    tms.ID = temp.ID
+                    tms.Name = temp.Name
+                    Purchases.Add(tms)
+
+                ElseIf i > 0 And i < 5 Then
+
+                    cost = CType(temp.Cost.Split(":")(1).Split(";")(i), Integer)
+                    tms.Number = i + 1
+                    tms.ID = temp.ID
+                    tms.Name = temp.Name
+                    Purchases.Add(tms)
+
+                Else
+
+                    MsgBox("You can only purchase a module up to 5 times at the moment! Module not added. You have already purchased it the max number of times!", MsgBoxStyle.Critical, "Skins of Steel")
+                    Exit Sub
+
+                End If
+
+            Else
+                'If none of those match, the cost must be a number. Handle as normal.
+
+                cost = temp.Cost
+
+
+            End If
+
+            If CType(APBalance.Text, Integer) - cost > 0 Then
+
+                'Before applying Cost, run a check real quick
+                'First, Has it already been bought?
+                Dim AlreadyBought As Boolean = False
+                Dim tempNodes As TreeNodeCollection
+                Dim tempnode As New TreeNode
+
+                'see if it's already here and save it and children
+                If TreeView3.Nodes.ContainsKey(temp.Cost) Then
+
+                    AlreadyBought = True
+                    If TreeView3.Nodes(temp.ID).Nodes.Count > 0 Then
+
+                        'well shit, it has children
+                        tempNodes = TreeView3.Nodes(temp.ID).Nodes
+                        tempnode = TreeView3.Nodes(temp.ID)
+
+
+                    Else
+
+                        'oh good, no children
+                        tempnode = TreeView3.Nodes(temp.ID)
+
+                    End If
+
+                Else
+
+                    AlreadyBought = False
+
+                End If
+
+                If AlreadyBought And Not temp.Cost.Contains("MULTI") Then
+
+                    'Alreadybought and not multi
+                    MsgBox("You have already purchased that module and it has no multistage costing. You can't purchase this multiple times.", MsgBoxStyle.Critical, "Skins of Steel")
+                    Exit Sub
+
+                ElseIf AlreadyBought And temp.Cost.Contains("MULTI") Then
+
+                    'AlreadyBought and it is a multi
+                    TreeView3.Nodes.Remove(tempnode)
+                    tempnode = TreeView3.Nodes.Add(temp.ID.ToString, temp.Name + " (" + Purchases(Purchases.Count - 1).Number.ToString + ")")
+                    'Did it have children?
+                    If tempNodes.Count > 0 Then
+
+                        For Each i As TreeNode In tempNodes
+
+                            TreeView3.Nodes(tempnode.Index).Nodes.Add(i)
+
+                        Next
+
+
+                    End If
+                    APSpent.Text = CType(CType(APSpent.Text, Integer) + cost, String)
+                    APBalance.Text = CType(CType(APBalance.Text, Integer) - cost, String)
+
+                ElseIf AlreadyBought And temp.Cost.Contains("ArtInt") Then
+
+                    'Artifact integration, need to add new artifact below primary node
+                    TreeView3.Nodes(tempnode.Index).Nodes.Add(Artifacts(Artifacts.Count - 1).Name)
+                    APSpent.Text = CType(CType(APSpent.Text, Integer) + cost, String)
+                    APBalance.Text = CType(CType(APBalance.Text, Integer) - cost, String)
+
+                ElseIf Not AlreadyBought And temp.Cost.Contains("ArtInt") Then
+
+                    'Artifact integration, need to add new artifact below primary node and add primary node
+                    tempnode = TreeView3.Nodes.Add(temp.ID.ToString, temp.Name)
+                    TreeView3.Nodes(tempnode.Index).Nodes.Add(Artifacts(Artifacts.Count - 1).Name)
+                    APSpent.Text = CType(CType(APSpent.Text, Integer) + cost, String)
+                    APBalance.Text = CType(CType(APBalance.Text, Integer) - cost, String)
+
+                Else
+
+                    'it has not already been bought and we can add it
+                    TreeView3.Nodes.Add(temp.ID.ToString, temp.Name)
+                    APSpent.Text = CType(CType(APSpent.Text, Integer) + cost, String)
+                    APBalance.Text = CType(CType(APBalance.Text, Integer) - cost, String)
 
                 End If
 
             Else
 
-                If temp.Cost.Contains("Varies") Then
-
-                    n = 0
-
-                Else
-
-                    n = temp.Cost
-
-                End If
-
-                d = d + n
-                f = f - n
-
-                APSpent.Text = d
-                APBalance.Text = f
-                TreeView3.Nodes.Add(temp.Name)
+                MsgBox("You don't have enough AP to buy that.", MsgBoxStyle.Information, "Skins of Steel")
 
             End If
 
@@ -188,31 +427,141 @@ Public Class VehicleMain
 
     Public Sub Handle_SubSystem_DblClick(Sender As Object, e As EventArgs) Handles TreeView2.DoubleClick
 
-        If (TreeView1.SelectedNode.Level > 0) Then
+        Dim temp As SubSystem = Data.GetSubSystems()((CType(TreeView2.SelectedNode.Name, Integer) - CType(Data.GetSystems, List(Of SOSSystem)).Count) + 1)
+        Dim cost As Integer = 0
 
-            Dim temp As List(Of SubSystem) = Data.GetSubSystems
+        If temp.Cost.Contains("MATH") Then
 
+            'Only one math formula here, but will parse it in case more modules are added with different formulas
+            For Each a As Char In temp.Cost
 
-            For Each item As SubSystem In temp
+                If a = "+" Then
+                    Dim partone As String = temp.Cost.Split("+")(0).Split(":")(1)
+                    Dim parttwo As String = temp.Cost.Split("+")(1)
 
-                If item.Name = TreeView2.SelectedNode.Text Then
+                    If partone = "SC" Then
 
-                    Dim f As Integer = APBalance.Text
-                    Dim n As Integer = item.Cost
-                    Dim d As Integer = APSpent.Text
+                        If ComboBox2.SelectedIndex = -1 Then
 
-                    d = d + n
-                    f = f - n
+                            MsgBox("This system requires a size category to be selected. Please select a Size Category and repurchase this module.", MsgBoxStyle.Critical, "Skins of Steel")
+                            Exit Sub
 
-                    APSpent.Text = d
-                    APBalance.Text = f
+                        Else
 
-                    TreeView3.Nodes.Add(TreeView2.SelectedNode.Text)
+                            cost = (ComboBox2.SelectedIndex + 1) + CType(parttwo, Integer)
+                            Exit For
 
+                        End If
+
+                    End If
+
+                ElseIf a = "/" Then
+                    Dim partone As String = temp.Cost.Split("/")(0)
+                    Dim parttwo As String = temp.Cost.Split("/")(1)
+
+                    If partone = "SC" Then
+
+                        If ComboBox2.SelectedIndex = -1 Then
+
+                            MsgBox("This system requires a size category to be selected. Please select a Size Category and repurchase this module.", MsgBoxStyle.Critical, "Skins of Steel")
+                            Exit Sub
+
+                        Else
+
+                            cost = ComboBox2.SelectedIndex / CType(parttwo, Integer)
+                            Exit For
+
+                        End If
+
+                    End If
 
                 End If
 
             Next
+
+        ElseIf temp.Cost.Contains("SPECIAL") Then
+
+            'Only two things to do here: RealityC and SorcWard
+            If temp.Cost.Contains("RealityC") Then
+
+                If ComboBox2.SelectedIndex = -1 Then
+
+                    MsgBox("This module requires a Size Category to be selected.", MsgBoxStyle.Critical, "Skins of Steel")
+                    Exit Sub
+
+                Else
+
+                    cost = (ComboBox2.SelectedIndex + 1) * 3
+
+                End If
+
+            ElseIf temp.Cost.Contains("SorcWard") Then
+
+                Dim Circle As String = InputBox("Please input the circle of the spell to be warded against using 1, 2 or 3.", "Skins of Steel", "0")
+
+                If ComboBox2.SelectedIndex = -1 Then
+
+                    MsgBox("This system requires a size category to have been selected.", MsgBoxStyle.Critical, "Skins of Steel")
+                    Exit Sub
+
+                ElseIf Not IsNumeric(Circle) Then
+
+                    MsgBox("The circle must be a number! Module not added.", MsgBoxStyle.Critical, "Skins of Steel")
+                    Exit Sub
+
+                ElseIf CType(Circle, Integer) > 3 Then
+
+                    MsgBox("There is no circle of magic higher than 3. Review your response. Module not added.", MsgBoxStyle.Critical, "Skins of Steel")
+                    Exit Sub
+
+                Else
+
+                    cost = (ComboBox2.SelectedIndex + 1) + (CType(Circle, Integer) * 2)
+
+                End If
+
+            End If
+
+        Else
+
+            'regular number
+            cost = temp.Cost
+
+        End If
+
+        'Cost is obtained, Player can afford?
+        If CType(APBalance.Text, Integer) - CType(cost, Integer) > 0 Then
+
+            'Player can afford the module
+            'does it already exist?
+            If TreeView3.Nodes.ContainsKey(temp.ID) Then
+
+                If Not temp.Cost.Contains("MULTI") Then
+
+                    'they already have this but it's not a multi purchase
+                    MsgBox("You can't purchase this module more than once.", MsgBoxStyle.Critical, "Skins of Steel")
+                    Exit Sub
+
+                Else
+
+                    MsgBox("No submodules are multistage yet.", MsgBoxStyle.Information, "Skins of Steel")
+                    Exit Sub
+
+                End If
+
+            Else
+
+                TreeView3.Nodes((temp.Required).ToString).Nodes.Add(temp.ID, temp.Name)
+                APBalance.Text = CType(APBalance.Text, Integer) - cost
+                APSpent.Text = CType(APSpent.Text, Integer) + cost
+
+            End If
+
+        Else
+
+            'player cannot afford the module
+            MsgBox("You don't have enough AP to purchase that module.", MsgBoxStyle.Critical, "Skins of Steel")
+            Exit Sub
 
         End If
 
@@ -220,109 +569,145 @@ Public Class VehicleMain
 
     Public Sub Handle_Final_DblClick(Sender As Object, e As EventArgs) Handles TreeView3.DoubleClick
 
-        Dim temp As List(Of SubSystem) = Data.GetSubSystems
+        If TreeView3.SelectedNode.Level = 0 Then
 
-        For Each item As SubSystem In temp
+            'SOSSystem
+            Dim temp As SOSSystem = Data.GetSystems(CType(TreeView3.SelectedNode.Name, Integer))
+            Dim cost As Integer = 0
 
-            If TreeView3.SelectedNode.Text = item.Name Then
+            If temp.Cost.Contains("MATH") Then
+                'Account for MATH - costs that begin with MATH indicate a formula that must be parsed
+                For Each a As Char In temp.Cost
 
-                Dim f As Integer = APBalance.Text
-                Dim d As Integer = APSpent.Text
-                Dim n As Integer
+                    If a = "+" Then
+                        Dim partone As String = temp.Cost.Split("+")(0).Split(":")(1)
+                        Dim parttwo As String = temp.Cost.Split("+")(1)
 
-                If item.Cost.Contains("Size") Then
+                        If partone = "SC" Then
 
-                    Dim ts As String = item.Cost.Replace("Size Category", ComboBox2.SelectedItem)
-                    n = ts.Split("/")(0) / ts.Split("/")(1)
+                            If ComboBox2.SelectedIndex = -1 Then
 
-                    If n = 0 Then
+                                MsgBox("This system requires a size category to be selected. Please select a Size Category and repurchase this module.", MsgBoxStyle.Critical, "Skins of Steel")
+                                Exit Sub
 
-                        n = 1
+                            Else
+
+                                cost = (ComboBox2.SelectedIndex + 1) + CType(parttwo, Integer)
+                                Exit For
+
+                            End If
+
+                        End If
+
+                    ElseIf a = "/" Then
+                        Dim partone As String = temp.Cost.Split("/")(0)
+                        Dim parttwo As String = temp.Cost.Split("/")(1)
+
+                        If partone = "SC" Then
+
+                            If ComboBox2.SelectedIndex = -1 Then
+
+                                MsgBox("This system requires a size category to be selected. Please select a Size Category and repurchase this module.", MsgBoxStyle.Critical, "Skins of Steel")
+                                Exit Sub
+
+                            Else
+
+                                cost = ComboBox2.SelectedIndex / CType(parttwo, Integer)
+                                Exit For
+
+                            End If
+
+                        End If
 
                     End If
 
-                    d = d + n
-                    f = f - n
+                Next
 
-                    APSpent.Text = d
-                    APBalance.Text = f
-                    TreeView3.SelectedNode.Remove()
-                    Exit For
+            ElseIf temp.Cost.Contains("SPECIAL") Then
+                'Account for SPECIAL - costs that begin with SPECIAL indicate either something that requires another 
+                'tool to come up with a cost (TARS, WARDS, AIS) or that are calculated a special way (Reality, Artifact Integration)
+
+                Dim tempstr As String = temp.Cost.Split(":")(1)
+                Dim tai As New ArtInts
+
+                If tempstr = "ArtInt" Then
+
+                    Dim Result As DialogResult = MessageBox.Show("Removing Artifact Integration will remove all current Artifacts. Is that what you want to do?", "Skins of Steel", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1)
+
+                    If Result = DialogResult.Yes Then
+
+
+
+                    Else
+
+
+
+                    End If
+
+                ElseIf tempstr = "TARS" Then
+
+                    MsgBox("You don't actually buy this module. Costs associated with this module are created in the TARS Creator.", MsgBoxStyle.Information, "Skins of Steel")
+
+                ElseIf tempstr = "WARDS" Then
+
+                    MsgBox("You don't actually buy this module. Costs associated with this module are created in the WARDS Creator.", MsgBoxStyle.Information, "Skins of Steel")
+
+                End If
+
+
+            ElseIf temp.Cost.Contains("MULTI") Then
+                'Account for MULTI - costs that begin with MULTI indicate an item that can be purchased either more than once and stacked
+                'or that have two variations in terms of what it does built into the description
+
+                Dim i As Integer = 0
+                Dim x As Integer = 0
+                Dim tms As New Multistage
+
+                For Each item As Multistage In Purchases
+
+                    If item.ID = temp.ID Then
+
+                        tms = item
+                        i = item.Number
+                        Exit For
+
+                    End If
+
+                    x = x + 1
+
+                Next
+
+                cost = CType(temp.Cost.Split(":")(1).Split(";")(i - 1), Integer)
+
+                If i - 1 = 0 Then
+
+                    Purchases.RemoveAt(x)
 
                 Else
 
-                    If item.Cost.Contains("Varies") Then
-                        n = 0
-                    Else
-                        n = item.Cost
-                    End If
-
-                    d = d + n
-                    f = f - n
-
-                    APSpent.Text = d
-                    APBalance.Text = f
-                    TreeView3.SelectedNode.Remove()
-                    Exit For
+                    tms.Number = i - 1
+                    tms.ID = temp.ID
+                    tms.Name = temp.Name
+                    Purchases.RemoveAt(x)
+                    Purchases.Add(tms)
 
                 End If
+
+            Else
+                'If none of those match, the cost must be a number. Handle as normal.
+
+                cost = temp.Cost
+
 
             End If
 
-        Next
+            'Cost obtained, refund
 
-        If TreeView3.GetNodeCount(True) > 0 Then
+        Else
 
-            Dim temp2 As List(Of SOSSystem) = Data.GetSystems()
+            'SubSystem
+            Dim temp As SubSystem = Data.GetSubSystems()((CType(TreeView2.SelectedNode.Name, Integer) - CType(Data.GetSystems, List(Of SOSSystem)).Count) + 1)
 
-            For Each item As SOSSystem In temp2
-
-                If TreeView3.SelectedNode.Text = item.Name Then
-
-                    Dim f As Integer = APBalance.Text
-                    Dim d As Integer = APSpent.Text
-                    Dim n As Integer
-
-                    If item.Cost.Contains("Size") Then
-
-                        Dim ts As String = item.Cost.Replace("Size Category", ComboBox2.SelectedItem)
-                        n = ts.Split("/")(0) / ts.Split("/")(1)
-
-                        If n = 0 Then
-
-                            n = 1
-
-                        End If
-
-                        d = d + n
-                        f = f - n
-
-                        APSpent.Text = d
-                        APBalance.Text = f
-                        TreeView3.SelectedNode.Remove()
-                        Exit For
-
-                    Else
-
-                        If item.Cost.Contains("Varies") Then
-                            n = 0
-                        Else
-                            n = item.Cost
-                        End If
-
-                        d = d + n
-                        f = f - n
-
-                        APSpent.Text = d
-                        APBalance.Text = f
-                        TreeView3.SelectedNode.Remove()
-                        Exit For
-
-                    End If
-
-                End If
-
-            Next
 
         End If
 

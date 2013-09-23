@@ -181,17 +181,3 @@ Public Structure VehicleCase
     Dim Position As Integer
 
 End Structure
-
-Public Structure WornCase
-
-    Dim Worn As WornMain
-    Dim Position As Integer
-
-End Structure
-
-Public Structure StriderCase
-
-    Dim Strider As StriderMain
-    Dim Position As Integer
-
-End Structure

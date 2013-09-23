@@ -106,10 +106,16 @@
 
     Public Vehicles As New List(Of VehicleCase)
     Public Data As New SystemData
-    'Public TARWeapons as new list(of TARWeapon)
+    Public TARWeapons As New List(Of TARWeapon)
     'Public WWards as new list(of wward)
 
 End Module
+
+Public Structure TARWeapon
+
+
+
+End Structure
 
 Public Structure ArtInts
 

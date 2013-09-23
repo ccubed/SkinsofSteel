@@ -203,7 +203,7 @@
 
                         Else
 
-                            output = output + vbTab + tempsub.Name + " - " + tempsub.Cost + vbNewLine
+                            output = output + vbTab + tempsub.Name + " - " + temp.Cost + vbNewLine
 
                         End If
 

@@ -28,7 +28,7 @@ Public Class VehicleMain
 
         If (TreeView1.SelectedNode.Level > 0) Then
 
-            Dim sosmod As SOSSystem = GetSystem(TreeView1.SelectedNode.Text, Data.GetSystems())
+            Dim sosmod As SOSSystem = Data.GetSystems()(CType(TreeView1.SelectedNode.Name, Integer) - 1)
             Dim temp As String = sosmod.Desc
             Dim cost As String
             temp = temp.Replace("[NEWLINE]", vbNewLine + vbNewLine)
@@ -80,7 +80,7 @@ Public Class VehicleMain
 
     Public Sub Handle_SubSystem_Select(sender As Object, e As EventArgs) Handles TreeView2.AfterSelect
 
-        Dim sosmod As SubSystem = GetSubSystem(TreeView2.SelectedNode.Text, Data.GetSubSystems())
+        Dim sosmod As SubSystem = Data.GetSubSystems()((CType(TreeView2.SelectedNode.Name, Integer) - CType(Data.GetSystems, List(Of SOSSystem)).Count) - 1)
         Dim temp As String = sosmod.Desc
         Dim cost As String
 
@@ -184,7 +184,7 @@ Public Class VehicleMain
 
         If (TreeView1.SelectedNode.Level > 0) Then
 
-            Dim temp As SOSSystem = GetSystem(TreeView1.SelectedNode.Text, Data.GetSystems())
+            Dim temp As SOSSystem = Data.GetSystems()(CType(TreeView1.SelectedNode.Name, Integer) - 1)
 
             Dim cost As Integer = 0
 
@@ -427,7 +427,7 @@ Public Class VehicleMain
 
     Public Sub Handle_SubSystem_DblClick(Sender As Object, e As EventArgs) Handles TreeView2.DoubleClick
 
-        Dim temp As SubSystem = GetSubSystem(TreeView2.SelectedNode.Text, Data.GetSubSystems())
+        Dim temp As SubSystem = Data.GetSubSystems()((CType(TreeView2.SelectedNode.Name, Integer) - CType(Data.GetSystems, List(Of SOSSystem)).Count) - 1)
         Dim cost As Integer = 0
 
         If temp.Cost.Contains("MATH") Then
@@ -608,14 +608,7 @@ Public Class VehicleMain
         If TreeView3.SelectedNode.Level = 0 Then
 
             'SOSSystem
-            Dim temp As SOSSystem = GetSystem(TreeView3.SelectedNode.Text, Data.GetSystems())
-
-            If IsNothing(temp) Then
-
-                MsgBox("This is a bug. Tell Aeric temp was nothing.")
-                Exit Sub
-
-            End If
+            Dim temp As SOSSystem = Data.GetSystems(CType(TreeView3.SelectedNode.Name, Integer))
 
             If temp.Cost.Contains("MATH") Then
                 'Account for MATH - costs that begin with MATH indicate a formula that must be parsed
@@ -772,7 +765,7 @@ Public Class VehicleMain
             Else
 
                 'Not an Artifact
-                Dim temp As SubSystem = GetSubSystem(TreeView2.SelectedNode.Text, Data.GetSubSystems())
+                Dim temp As SubSystem = Data.GetSubSystems()((CType(TreeView3.SelectedNode.Name, Integer) - CType(Data.GetSystems, List(Of SOSSystem)).Count) + 1)
 
                 If temp.Cost.Contains("MATH") Then
 

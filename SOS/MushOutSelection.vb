@@ -51,7 +51,7 @@
             output = output + a.Text + " - "
 
             Dim cost As Integer = 0
-            Dim temp As SOSSystem = Data.GetSystems()(CType(a.Name, Integer))
+            Dim temp As SOSSystem = GetSystem(a.Text, Data.GetSystems())
 
             If temp.Cost.Contains("MATH") Then
                 'Account for MATH - costs that begin with MATH indicate a formula that must be parsed
@@ -142,7 +142,7 @@
                 For Each item As TreeNode In a.Nodes
 
                     cost = 0
-                    Dim tempsub As SubSystem = Data.GetSubSystems()((CType(item.Name, Integer) - CType(Data.GetSystems, List(Of SOSSystem)).Count) + 1)
+                    Dim tempsub As SubSystem = GetSubSystem(item.Text, Data.GetSubSystems())
 
                     If a.Text = "Artifact Integration" Then
 

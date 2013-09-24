@@ -104,40 +104,6 @@
 
     End Sub
 
-    Function GetSystem(ByVal name As String, ByVal Items As List(Of SOSSystem)) As SOSSystem
-
-        For Each thing As SOSSystem In Items
-
-            If thing.Name = name Then
-
-                Return thing
-                Exit Function
-
-            End If
-
-        Next
-
-        Return Nothing
-
-    End Function
-
-    Function GetSubSystem(ByVal name As String, ByVal Items As List(Of SubSystem)) As SubSystem
-
-        For Each thing As SubSystem In Items
-
-            If thing.Name = name Then
-
-                Return thing
-                Exit Function
-
-            End If
-
-        Next
-
-        Return Nothing
-
-    End Function
-
     Public Vehicles As New List(Of VehicleCase)
     Public Data As New SystemData
     'Public WWards as new list(of wward)

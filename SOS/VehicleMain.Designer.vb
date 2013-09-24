@@ -80,7 +80,7 @@ Public Class VehicleMain
 
     Public Sub Handle_SubSystem_Select(sender As Object, e As EventArgs) Handles TreeView2.AfterSelect
 
-        Dim sosmod As SubSystem = Data.GetSubSystems()((CType(TreeView2.SelectedNode.Name, Integer) - CType(Data.GetSystems, List(Of SOSSystem)).Count) + 1)
+        Dim sosmod As SubSystem = Data.GetSubSystems()((CType(TreeView2.SelectedNode.Name, Integer) - CType(Data.GetSystems, List(Of SOSSystem)).Count) - 1)
         Dim temp As String = sosmod.Desc
         Dim cost As String
 
@@ -184,7 +184,7 @@ Public Class VehicleMain
 
         If (TreeView1.SelectedNode.Level > 0) Then
 
-            Dim temp As SOSSystem = Data.GetSystems()(CType(TreeView1.SelectedNode.Name, Integer))
+            Dim temp As SOSSystem = Data.GetSystems()(CType(TreeView1.SelectedNode.Name, Integer) - 1)
 
             Dim cost As Integer = 0
 
@@ -427,7 +427,7 @@ Public Class VehicleMain
 
     Public Sub Handle_SubSystem_DblClick(Sender As Object, e As EventArgs) Handles TreeView2.DoubleClick
 
-        Dim temp As SubSystem = Data.GetSubSystems()((CType(TreeView2.SelectedNode.Name, Integer) - CType(Data.GetSystems, List(Of SOSSystem)).Count) + 1)
+        Dim temp As SubSystem = Data.GetSubSystems()((CType(TreeView2.SelectedNode.Name, Integer) - CType(Data.GetSystems, List(Of SOSSystem)).Count) - 1)
         Dim cost As Integer = 0
 
         If temp.Cost.Contains("MATH") Then

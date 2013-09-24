@@ -106,14 +106,20 @@
 
     Public Vehicles As New List(Of VehicleCase)
     Public Data As New SystemData
-    Public TARWeapons As New List(Of TARWeapon)
     'Public WWards as new list(of wward)
 
 End Module
 
 Public Structure TARWeapon
 
-
+    Dim Name As String
+    Dim Speed As Integer
+    Dim Accuracy As Integer
+    Dim Damage As Integer
+    Dim Defense As Integer
+    Dim Rate As Integer
+    Dim Cost As Integer
+    Dim Modules As List(Of TarData)
 
 End Structure
 

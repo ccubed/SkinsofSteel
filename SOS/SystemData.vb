@@ -519,7 +519,7 @@ Structure SubSystem
 
 End Structure
 
-Structure TarData
+Public Structure TarData
 
 End Structure
 

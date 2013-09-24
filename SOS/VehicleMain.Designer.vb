@@ -4,6 +4,7 @@ Public Class VehicleMain
 
     Public Purchases As New List(Of Multistage)
     Public Artifacts As New List(Of ArtInts)
+    Public TARWeapons As New List(Of TARWeapon)
 
     'UserControl overrides dispose to clean up the component list.
     <System.Diagnostics.DebuggerNonUserCode()> _
@@ -27,7 +28,7 @@ Public Class VehicleMain
 
         If (TreeView1.SelectedNode.Level > 0) Then
 
-            Dim sosmod As SOSSystem = Data.GetSystems()(CType(TreeView1.SelectedNode.Name, Integer))
+            Dim sosmod As SOSSystem = Data.GetSystems()(CType(TreeView1.SelectedNode.Name, Integer) - 1)
             Dim temp As String = sosmod.Desc
             Dim cost As String
             temp = temp.Replace("[NEWLINE]", vbNewLine + vbNewLine)
@@ -987,6 +988,11 @@ Public Class VehicleMain
 
     End Sub
 
+    Public Sub Handle_TARS_Click(sender As Object, e As EventArgs) Handles PictureBox1.Click
+
+        MsgBox("TARS!")
+
+    End Sub
     'Required by the Windows Form Designer
     Private components As System.ComponentModel.IContainer
 

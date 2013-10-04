@@ -138,6 +138,257 @@
 
     End Function
 
+    Function GetSystemCost(ByVal temp As SOSSystem, ByVal where As VehicleMain) As Integer
+
+        Dim cost As Integer = 0
+
+        If temp.Cost.Contains("MATH") Then
+            'Account for MATH - costs that begin with MATH indicate a formula that must be parsed
+            For Each a As Char In temp.Cost
+
+                If a = "+" Then
+                    Dim partone As String = temp.Cost.Split("+")(0).Split(":")(1)
+                    Dim parttwo As String = temp.Cost.Split("+")(1)
+
+                    If partone = "SC" Then
+
+                        If where.ComboBox2.SelectedIndex = -1 Then
+
+                            Return -1
+
+                        Else
+
+                            cost = (where.ComboBox2.SelectedIndex + 1) + CType(parttwo, Integer)
+                            Exit For
+
+                        End If
+
+                    End If
+
+                ElseIf a = "/" Then
+                    Dim partone As String = temp.Cost.Split("/")(0).Split(":")(1)
+                    Dim parttwo As String = temp.Cost.Split("/")(1)
+
+                    If partone = "SC" Then
+
+                        If where.ComboBox2.SelectedIndex = -1 Then
+
+                            Return -1
+
+                        Else
+
+                            cost = where.ComboBox2.SelectedIndex / CType(parttwo, Integer)
+                            Exit For
+
+                        End If
+
+                    End If
+
+                End If
+
+            Next
+
+        ElseIf temp.Cost.Contains("SPECIAL") Then
+            'Account for SPECIAL - costs that begin with SPECIAL indicate either something that requires another 
+            'tool to come up with a cost (TARS, WARDS, AIS) or that are calculated a special way (Reality, Artifact Integration)
+
+            Dim tempstr As String = temp.Cost.Split(":")(1)
+            Dim tai As New ArtInts
+
+            If tempstr = "ArtInt" Then
+
+                Dim i As String = InputBox("Enter the Artifact Rating of the Artifact being integrated.", "Skins of Steel")
+                Dim Artifact As String = InputBox("Enter the name of the Artifact you're integrating.", "Skins of Steel")
+
+                If Not IsNumeric(i) Then
+
+                    Return -2
+
+                Else
+
+                    cost = 3 * CType(i, Integer)
+
+                    tai.Name = Artifact
+                    tai.Rating = i
+
+                    where.Artifacts.Add(tai)
+
+                End If
+
+            ElseIf tempstr = "TARS" Then
+
+                Return -3
+
+            ElseIf tempstr = "WARDS" Then
+
+                Return -4
+
+            End If
+
+
+        ElseIf temp.Cost.Contains("MULTI") Then
+            'Account for MULTI - costs that begin with MULTI indicate an item that can be purchased either more than once and stacked
+            'or that have two variations in terms of what it does built into the description
+
+            Dim i As Integer = 0
+            Dim x As Integer = 0
+            Dim tms As New Multistage
+
+            For Each item As Multistage In where.Purchases
+
+                If item.ID = temp.ID Then
+
+                    tms = item
+                    i = item.Number
+                    Exit For
+
+                End If
+
+                x = x + 1
+
+            Next
+
+            If i > 0 Then
+
+                where.Purchases.RemoveAt(x)
+
+            End If
+
+            If i = 0 Then
+
+                cost = CType(temp.Cost.Split(":")(1).Split(";")(0), Integer)
+                tms.Number = 1
+                tms.ID = temp.ID
+                tms.Name = temp.Name
+                where.Purchases.Add(tms)
+
+            ElseIf i > 0 And i < 5 Then
+
+                cost = CType(temp.Cost.Split(":")(1).Split(";")(i), Integer)
+                tms.Number = i + 1
+                tms.ID = temp.ID
+                tms.Name = temp.Name
+                where.Purchases.Add(tms)
+
+            Else
+
+                Return -5
+
+            End If
+
+        Else
+            'If none of those match, the cost must be a number. Handle as normal.
+
+            cost = temp.Cost
+
+
+        End If
+
+        Return cost
+
+    End Function
+
+    Function GetSubCost(ByVal temp As SubSystem, ByVal where As VehicleMain) As Integer
+
+        Dim cost As Integer = 0
+
+        If temp.Cost.Contains("MATH") Then
+
+            'Only one math formula here, but will parse it in case more modules are added with different formulas
+            For Each a As Char In temp.Cost
+
+                If a = "+" Then
+                    Dim partone As String = temp.Cost.Split("+")(0).Split(":")(1)
+                    Dim parttwo As String = temp.Cost.Split("+")(1)
+
+                    If partone = "SC" Then
+
+                        If where.ComboBox2.SelectedIndex = -1 Then
+
+                            Return -1
+
+                        Else
+
+                            cost = (where.ComboBox2.SelectedIndex + 1) + CType(parttwo, Integer)
+                            Exit For
+
+                        End If
+
+                    End If
+
+                ElseIf a = "/" Then
+                    Dim partone As String = temp.Cost.Split("/")(0)
+                    Dim parttwo As String = temp.Cost.Split("/")(1)
+
+                    If partone = "SC" Then
+
+                        If where.ComboBox2.SelectedIndex = -1 Then
+
+                            Return -1
+
+                        Else
+
+                            cost = where.ComboBox2.SelectedIndex / CType(parttwo, Integer)
+                            Exit For
+
+                        End If
+
+                    End If
+
+                End If
+
+            Next
+
+        ElseIf temp.Cost.Contains("SPECIAL") Then
+
+            'Only two things to do here: RealityC and SorcWard
+            If temp.Cost.Contains("RealityC") Then
+
+                If where.ComboBox2.SelectedIndex = -1 Then
+
+                    Return -1
+
+                Else
+
+                    cost = (where.ComboBox2.SelectedIndex + 1) * 3
+
+                End If
+
+            ElseIf temp.Cost.Contains("SorcWard") Then
+
+                Dim Circle As String = InputBox("Please input the circle of the spell to be warded against using 1, 2 or 3.", "Skins of Steel", "0")
+
+                If where.ComboBox2.SelectedIndex = -1 Then
+
+                    Return -1
+
+                ElseIf Not IsNumeric(Circle) Then
+
+                    Return -2
+
+                ElseIf CType(Circle, Integer) > 3 Or CType(Circle, Integer) < 1 Then
+
+                    Return -3
+
+                Else
+
+                    cost = (where.ComboBox2.SelectedIndex + 1) + (CType(Circle, Integer) * 2)
+
+                End If
+
+            End If
+
+        Else
+
+            'regular number
+            cost = temp.Cost
+
+        End If
+
+        Return cost
+
+    End Function
+
     Public Vehicles As New List(Of VehicleCase)
     Public Data As New SystemData
     'Public WWards as new list(of wward)
@@ -217,6 +468,17 @@ Public Structure PreRequisites
     Dim Sizeplus As Integer
     Dim Othersys As Integer
     Dim AI As Integer
+
+End Structure
+
+Public Structure TEData
+
+    Dim acc As Integer
+    Dim def As Integer
+    Dim dam As Integer
+    Dim speed As Integer
+    Dim rate As Integer
+    Dim overwhelm As Integer
 
 End Structure
 

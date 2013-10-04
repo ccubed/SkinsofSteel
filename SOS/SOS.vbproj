@@ -123,6 +123,12 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="SystemData.vb" />
+    <Compile Include="TARCreator.Designer.vb">
+      <DependentUpon>TARCreator.vb</DependentUpon>
+    </Compile>
+    <Compile Include="TARCreator.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Utilities.vb" />
     <Compile Include="VehicleMain.Designer.vb">
       <DependentUpon>VehicleMain.vb</DependentUpon>
@@ -144,6 +150,9 @@
       <LastGenOutput>Resources.Designer.vb</LastGenOutput>
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TARCreator.resx">
+      <DependentUpon>TARCreator.vb</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -349,7 +349,23 @@ Class SystemData
         End While
 
         'Next Job: TARS
-        'Not Implemented yet
+        iterator = nav.Select("SOS/tars/system")
+        While iterator.MoveNext
+
+            Dim child As Xml.XPath.XPathNodeIterator = iterator.Current.SelectChildren(XPath.XPathNodeType.Element)
+            Dim temp As New TarData
+
+            While child.MoveNext
+
+                If child.Current.Name = "name" Then
+
+
+                End If
+
+            End While
+
+        End While
+
 
         'Next Job: Wards
         'Not implemented yet
@@ -520,6 +536,12 @@ Structure SubSystem
 End Structure
 
 Public Structure TarData
+
+    Dim Name As String
+    Dim Cost As Integer
+    Dim ID As Integer
+    Dim Desc As String
+    Dim Effects As TEData
 
 End Structure
 

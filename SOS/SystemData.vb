@@ -360,6 +360,13 @@ Class SystemData
                 If child.Current.Name = "name" Then
 
 
+
+                ElseIf child.Current.Name = "cost" Then
+
+                ElseIf child.Current.Name = "desc" Then
+
+                ElseIf child.Current.Name = "id" Then
+
                 End If
 
             End While
@@ -541,7 +548,6 @@ Public Structure TarData
     Dim Cost As Integer
     Dim ID As Integer
     Dim Desc As String
-    Dim Effects As TEData
 
 End Structure
 

@@ -471,17 +471,6 @@ Public Structure PreRequisites
 
 End Structure
 
-Public Structure TEData
-
-    Dim acc As Integer
-    Dim def As Integer
-    Dim dam As Integer
-    Dim speed As Integer
-    Dim rate As Integer
-    Dim overwhelm As Integer
-
-End Structure
-
 'Helper Structures for MDI stuff
 Public Structure VehicleCase
 
